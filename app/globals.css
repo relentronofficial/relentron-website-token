@@ -1,0 +1,122 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Water-like animation */
+body {
+  background: linear-gradient(120deg, #0f2027, #203a43, #2c5364);
+  transition: background 10s ease-in-out;
+  overflow-x: hidden;
+}
+
+@keyframes glitter {
+  0% {
+    transform: translateX(-100%) rotate(15deg);
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateX(100%) rotate(15deg);
+    opacity: 0.2;
+  }
+}
+
+.animate-glitter {
+  background: linear-gradient(
+    120deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.7) 50%,
+    transparent 100%
+  );
+  animation: glitter 3.5s ease-in-out infinite;
+  mix-blend-mode: overlay;
+}
+
+/* .water-effect {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.05), transparent 70%);
+  mix-blend-mode: overlay;
+  animation: shimmer 6s infinite linear;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.water-effect--soft {
+  animation: shimmer 10s infinite linear reverse;
+} */
+
+@keyframes shimmer {
+  0% { transform: translateX(0) translateY(0); }
+  50% { transform: translateX(-2%) translateY(2%); }
+  100% { transform: translateX(0) translateY(0); }
+}
+
+
+
+
+@layer utilities {
+  @media (max-width: 1024px) {
+    .g-recaptcha-scale {
+      transform: scale(0.95);
+    }
+  }
+  @media (max-width: 768px) {
+    .g-recaptcha-scale {
+      transform: scale(0.9);
+    }
+  }
+  @media (max-width: 640px) {
+    .g-recaptcha-scale {
+      transform: scale(0.85);
+    }
+  }
+  @media (max-width: 480px) {
+    .g-recaptcha-scale {
+      transform: scale(0.75);
+    }
+  }
+  @media (max-width: 360px) {
+    .g-recaptcha-scale {
+      transform: scale(0.7);
+    }
+  }
+}
+
+
+canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+@media (max-width: 768px) {
+  canvas {
+    transform: scale(0.7);
+  }
+}
+
