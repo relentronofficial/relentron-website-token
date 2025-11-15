@@ -22,7 +22,7 @@ export default function Navbar() {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="text-2xl font-bold text-blue-400"
+          className="text-2xl font-bold text-blue-400 gpu"
         >
           <Link href="/">Relentron</Link>
         </motion.h1>
@@ -36,7 +36,7 @@ export default function Navbar() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 * index }}
               whileHover={{ scale: 1.1 }}
-              className="cursor-pointer hover:text-blue-400 transition-colors"
+              className="cursor-pointer hover:text-blue-400 transition-colors gpu"
             >
               <Link href={item.path}>{item.name}</Link>
             </motion.li>
@@ -60,7 +60,7 @@ export default function Navbar() {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
-          className="md:hidden bg-black/90 border-t border-gray-800"
+          className="md:hidden bg-black/90 border-t border-gray-800 gpu"
         >
           <ul className="flex flex-col items-center gap-6 py-6 text-lg font-medium text-white">
             {navItems.map((item) => (

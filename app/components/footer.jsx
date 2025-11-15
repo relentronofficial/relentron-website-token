@@ -93,7 +93,7 @@ export default function Footer() {
   initial={{ opacity: 0, y: 40 }}
   whileInView={{ opacity: 1, y: 0 }}
   transition={{ duration: 1, delay: 0.4 }}
-  className="space-y-6"
+  className="space-y-6 gpu"
 >
   <h4 className="text-lg font-semibold text-white">Follow Us</h4>
   <div className="flex gap-5">
@@ -108,7 +108,7 @@ export default function Footer() {
         boxShadow: "0 0 25px rgba(14,118,168,0.6)",
       }}
       transition={{ type: "spring", stiffness: 300 }}
-      className="p-3 rounded-full bg-gradient-to-r from-blue-600 via-blue-500 to-blue-400 shadow-[0_0_10px_rgba(14,118,168,0.3)] hover:shadow-[0_0_20px_rgba(14,118,168,0.6)]"
+      className="p-3 rounded-full bg-gradient-to-r from-blue-600 via-blue-500 to-blue-400 shadow-[0_0_10px_rgba(14,118,168,0.3)] hover:shadow-[0_0_20px_rgba(14,118,168,0.6)] gpu"
     >
       <Linkedin className="text-white" size={18} />
     </motion.a>
@@ -124,7 +124,7 @@ export default function Footer() {
         boxShadow: "0 0 25px rgba(255,64,129,0.6)",
       }}
       transition={{ type: "spring", stiffness: 300 }}
-      className="p-3 rounded-full bg-gradient-to-r from-pink-500 via-purple-500 to-yellow-400 shadow-[0_0_10px_rgba(255,64,129,0.3)] hover:shadow-[0_0_20px_rgba(255,64,129,0.6)]"
+      className="p-3 rounded-full bg-gradient-to-r from-pink-500 via-purple-500 to-yellow-400 shadow-[0_0_10px_rgba(255,64,129,0.3)] hover:shadow-[0_0_20px_rgba(255,64,129,0.6)] gpu"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -153,7 +153,7 @@ export default function Footer() {
         boxShadow: "0 0 25px rgba(59,89,152,0.6)",
       }}
       transition={{ type: "spring", stiffness: 300 }}
-      className="p-3 rounded-full bg-gradient-to-r from-blue-700 via-blue-600 to-blue-500 shadow-[0_0_10px_rgba(59,89,152,0.3)] hover:shadow-[0_0_20px_rgba(59,89,152,0.6)]"
+      className="p-3 rounded-full bg-gradient-to-r from-blue-700 via-blue-600 to-blue-500 shadow-[0_0_10px_rgba(59,89,152,0.3)] hover:shadow-[0_0_20px_rgba(59,89,152,0.6)] gpu"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -169,7 +169,7 @@ export default function Footer() {
       </div>
 
       {/* Divider + Copyright + Links */}
-      <div className="relative z-20 border-t border-white/10 mt-8 py-6 text-center text-sm text-gray-500">
+      <div className="relative z-20 border-t border-white/10 mt-8 py-6 text-center text-sm text-gray-500 ">
         <p>
           © {new Date().getFullYear()}{" "}
           <span className="text-cyan-400 font-semibold">Relentron</span>. All rights reserved.
@@ -195,7 +195,7 @@ export default function Footer() {
         initial={{ opacity: 0 }}
         animate={{ opacity: [0, 0.5, 0] }}
         transition={{ repeat: Infinity, duration: 8, ease: "easeInOut" }}
-        className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent"
+        className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent gpu"
       />
 
       {/* 🌈 Keyframes */}

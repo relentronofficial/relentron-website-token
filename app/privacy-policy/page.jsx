@@ -5,7 +5,7 @@ export default function PrivacyPolicy() {
   return (
     <div className="min-h-screen bg-[#050b1a] text-white">
       <motion.div
-        className="max-w-4xl mx-auto px-6 py-16"
+        className="max-w-4xl mx-auto px-6 py-16 gpu"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}

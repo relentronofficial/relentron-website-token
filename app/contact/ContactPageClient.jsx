@@ -10,7 +10,7 @@ export default function ContactPageClient() {
     <div className="min-h-screen bg-[#0a0f1c] text-white flex flex-col items-center py-20 px-6">
       {/* Title */}
       <motion.h1
-        className="text-4xl md:text-5xl font-bold mb-10 text-center text-cyan-400"
+        className="text-4xl md:text-5xl font-bold mb-10 text-center text-cyan-400 gpu"
         initial={{ opacity: 0, y: -30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1 }}
@@ -22,7 +22,7 @@ export default function ContactPageClient() {
       <div className="grid md:grid-cols-3 gap-10 w-full max-w-6xl mb-16">
         {/* Email */}
         <motion.div
-          className="bg-[#111a2e] rounded-2xl p-8 shadow-lg hover:shadow-[0_0_20px_rgba(56,189,248,0.3)] transition w-full"
+          className="bg-[#111a2e] rounded-2xl p-8 shadow-lg hover:shadow-[0_0_20px_rgba(56,189,248,0.3)] transition w-full gpu"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
@@ -37,7 +37,7 @@ export default function ContactPageClient() {
 
         {/* Phone */}
         <motion.div
-          className="bg-[#111a2e] rounded-2xl p-8 shadow-lg hover:shadow-[0_0_20px_rgba(56,189,248,0.3)] transition w-full"
+          className="bg-[#111a2e] rounded-2xl p-8 shadow-lg hover:shadow-[0_0_20px_rgba(56,189,248,0.3)] transition w-full gpu"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7 }}
@@ -50,7 +50,7 @@ export default function ContactPageClient() {
 
         {/* Address */}
         <motion.div
-          className="bg-[#111a2e] rounded-2xl p-8 shadow-lg hover:shadow-[0_0_20px_rgba(56,189,248,0.3)] transition w-full"
+          className="bg-[#111a2e] rounded-2xl p-8 shadow-lg hover:shadow-[0_0_20px_rgba(56,189,248,0.3)] transition w-full gpu"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}

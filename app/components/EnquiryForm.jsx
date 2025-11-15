@@ -246,11 +246,11 @@ export default function EnquiryForm({ floating = true, position: propPosition = 
         <motion.button
           type="submit"
           whileHover={{ scale: 1.05 }}
-          className="w-full py-2 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 rounded-lg text-white font-semibold text-sm shadow-lg transition"
+          className="w-full py-2 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 rounded-lg text-white font-semibold text-sm shadow-lg transition gpu"
         >
           Submit
         </motion.button>
-        {status && <p className="text-center text-xs mt-2">{status}</p>}
+        {status && <p className="text-center text-xs mt-2 gpu">{status}</p>}
       </form>
     );
   }
@@ -264,7 +264,7 @@ export default function EnquiryForm({ floating = true, position: propPosition = 
         onClick={() => setIsOpen(true)}
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.95 }}
-        className={`fixed bottom-6 z-50 px-5 py-3 rounded-full text-white font-semibold shadow-lg transition 
+        className={`fixed bottom-6 z-50 px-5 py-3 rounded-full text-white font-semibold shadow-lg transition gpu 
           ${
             position === "center"
               ? "left-1/2 -translate-x-1/2 bg-gradient-to-r from-purple-500 via-blue-500 to-cyan-500 hover:shadow-purple-500/50"
@@ -277,7 +277,7 @@ export default function EnquiryForm({ floating = true, position: propPosition = 
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-md"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-md gpu"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -287,7 +287,7 @@ export default function EnquiryForm({ floating = true, position: propPosition = 
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.8, opacity: 0, y: 50 }}
               transition={{ duration: 0.4, ease: "easeOut" }}
-              className="relative bg-[#0a0f24] border border-cyan-400/30 rounded-2xl shadow-[0_0_50px_rgba(56,189,248,0.2)] p-8 w-[90%] max-w-md"
+              className="relative bg-[#0a0f24] border border-cyan-400/30 rounded-2xl shadow-[0_0_50px_rgba(56,189,248,0.2)] p-8 w-[90%] max-w-md gpu"
             >
               <button
                 onClick={() => setIsOpen(false)}
@@ -305,7 +305,7 @@ export default function EnquiryForm({ floating = true, position: propPosition = 
                 <motion.button
                   type="submit"
                   whileHover={{ scale: 1.05 }}
-                  className="w-full py-3 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 rounded-lg text-white font-semibold shadow-lg transition"
+                  className="w-full py-3 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 rounded-lg text-white font-semibold shadow-lg transition gpu"
                 >
                   Submit Enquiry
                 </motion.button>

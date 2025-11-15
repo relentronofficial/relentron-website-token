@@ -102,7 +102,7 @@ export default function PricingPlans() {
         initial={{ opacity: 0, y: -40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1 }}
-        className="text-center text-3xl md:text-5xl font-extrabold mb-14"
+        className="text-center text-3xl md:text-5xl font-extrabold mb-14 gpu"
       >
         <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-500">
           Website Pricing Plans
@@ -114,7 +114,7 @@ export default function PricingPlans() {
         {plans.map((plan, index) => (
           <motion.div
             key={index}
-            className={`price-card rounded-2xl bg-gradient-to-b ${plan.gradient} p-[2px] shadow-2xl`}
+            className={`price-card rounded-2xl bg-gradient-to-b ${plan.gradient} p-[2px] shadow-2xl gpu`}
             whileHover={{ scale: 1.03 }}
             transition={{ type: "spring", stiffness: 180, damping: 14 }}
           >

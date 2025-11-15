@@ -41,7 +41,7 @@ export default function OurServices() {
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 1 }}
         viewport={{ once: true }}
-        className="text-5xl md:text-6xl font-extrabold mb-16 text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-500 drop-shadow-[0_0_25px_rgba(56,189,248,0.6)]"
+        className="text-5xl md:text-6xl font-extrabold mb-16 text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-500 drop-shadow-[0_0_25px_rgba(56,189,248,0.6)] gpu"
       >
         Website Development
       </motion.h2>
@@ -75,11 +75,11 @@ export default function OurServices() {
               rotateY: -3,
               boxShadow: "0px 10px 40px rgba(56,189,248,0.25)",
             }}
-            className="relative group bg-[#0f172a]/50 rounded-2xl p-8 backdrop-blur-md border border-white/10 shadow-[0_0_25px_rgba(0,0,0,0.3)] cursor-pointer transition-transform"
+            className="relative group bg-[#0f172a]/50 rounded-2xl p-8 backdrop-blur-md border border-white/10 shadow-[0_0_25px_rgba(0,0,0,0.3)] cursor-pointer transition-transform gpu"
           >
             {/* Glow on Hover */}
             <motion.div
-              className="absolute inset-0 opacity-0 group-hover:opacity-100 bg-gradient-to-r from-cyan-500/20 via-blue-500/25 to-purple-500/20 blur-2xl"
+              className="absolute inset-0 opacity-0 group-hover:opacity-100 bg-gradient-to-r from-cyan-500/20 via-blue-500/25 to-purple-500/20 blur-2xl gpu"
               animate={{ x: ["-100%", "100%"] }}
               transition={{
                 duration: 4,

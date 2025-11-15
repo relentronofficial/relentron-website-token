@@ -30,7 +30,7 @@ export default function CookieConsent() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 50 }}
           transition={{ duration: 0.5 }}
-          className="fixed bottom-6 right-6 z-50 w-[90%] md:w-[420px] bg-gray-900/95 text-white rounded-2xl shadow-lg border border-gray-700 backdrop-blur-md p-5"
+          className="fixed bottom-6 right-6 z-50 w-[90%] md:w-[420px] bg-gray-900/95 text-white rounded-2xl shadow-lg border border-gray-700 backdrop-blur-md p-5 gpu"
         >
           <div className="flex justify-between items-start">
             <h2 className="text-lg font-semibold text-white">We use cookies 🍪</h2>

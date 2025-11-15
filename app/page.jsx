@@ -84,7 +84,7 @@ export default function Home() {
         <div className="absolute top-[-15%] left-[5%] w-[800px] h-[800px] bg-[radial-gradient(circle,rgba(56,189,248,0.25),transparent_70%)] blur-3xl animate-pulse" />
         <div className="absolute bottom-[-10%] right-[5%] w-[1000px] h-[1000px] bg-[radial-gradient(circle,rgba(168,85,247,0.25),transparent_70%)] blur-3xl animate-pulse" />
         <motion.div
-          className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent opacity-30 blur-2xl"
+          className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent opacity-30 blur-2xl gpu"
           animate={{ x: ["-100%", "100%"] }}
           transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
         />
@@ -96,7 +96,7 @@ export default function Home() {
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1.5, ease: "easeOut" }}
-        className="relative flex flex-col items-center justify-center min-h-[70vh] text-center px-4 md:px-8 z-10"
+        className="relative flex flex-col items-center justify-center min-h-[70vh] text-center px-4 md:px-8 z-10 gpu"
       >
         
         {/* 🪩 3D Hero Text */}
@@ -111,6 +111,7 @@ export default function Home() {
     text-center 
     px-2 sm:px-4
     break-words
+    gpu
   "
 >
   Digital{" "}
@@ -120,11 +121,12 @@ export default function Home() {
   Partner
 </motion.h2>
 
+
         <motion.p
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1.3, delay: 0.3 }}
-          className="mt-6 text-gray-300 text-base sm:text-lg md:text-xl max-w-2xl"
+          className="mt-6 text-gray-300 text-base sm:text-lg md:text-xl max-w-2xl gpu"
         >
           We craft world-class digital experiences with technology, design, and innovation.
         </motion.p>
@@ -142,6 +144,7 @@ export default function Home() {
     hover:shadow-purple-500/40
     transition-all duration-300 ease-in-out
     backdrop-blur-md
+    gpu
   "
   onClick={() => router.push("/PricingPlans")}
 >
