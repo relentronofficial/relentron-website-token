@@ -6,13 +6,11 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useRouter } from "next/navigation";
 import OurServices from "../app/components/OurServices";
-import MobileCard from "../app/components/MobileCard";
 import DigitalMarketingSection from "../app/components/DigitalMarketingSection";
 import MobileAppDevelopmentSection from "../app/components/MobileAppDevelopmentSection";
 import SoftwareDevelopmentSection from "../app/components/SoftwareDevelopmentSection";
 import SoftwareFlow from "../app/components/check";
 import EnquiryForm from "../app/components/EnquiryForm";
-import About from "./about/page";
 import CookieConsent from "../app/components/CookieConsent";
 
 
