@@ -8,23 +8,34 @@ export default function OurServices() {
   const sectionRef = useRef(null);
   const cardsRef = useRef([]);
 
+  // 🌟 GSAP Entrance Animations (Runs ONCE)
   useEffect(() => {
+    const section = sectionRef.current;
+    const cards = cardsRef.current;
+
+    if (!section || cards.length === 0) return;
+
     gsap.fromTo(
-      sectionRef.current,
-      { opacity: 0, y: 100 },
-      { opacity: 1, y: 0, duration: 1.4, ease: "power3.out" }
+      section,
+      { opacity: 0, y: 80 },
+      {
+        opacity: 1,
+        y: 0,
+        duration: 1.2,
+        ease: "power3.out",
+      }
     );
 
     gsap.fromTo(
-      cardsRef.current,
-      { opacity: 0, y: 60 },
+      cards,
+      { opacity: 0, y: 40 },
       {
         opacity: 1,
         y: 0,
         duration: 1,
         ease: "power2.out",
-        stagger: 0.25,
-        delay: 0.6,
+        stagger: 0.2,
+        delay: 0.4,
       }
     );
   }, []);
@@ -33,7 +44,7 @@ export default function OurServices() {
     <section
       id="Web"
       ref={sectionRef}
-      className="relative  flex flex-col items-center justify-center px-15 py-30 bg-transparent text-white overflow-hidden"
+      className="relative flex flex-col items-center justify-center px-15 py-30 bg-transparent text-white overflow-hidden"
     >
       {/* Title */}
       <motion.h2
@@ -65,34 +76,25 @@ export default function OurServices() {
           <motion.div
             key={i}
             ref={(el) => (cardsRef.current[i] = el)}
-            initial={{ opacity: 0, y: 40 }}
+            initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: i * 0.2 }}
+            transition={{ duration: 0.8, delay: i * 0.15 }}
             viewport={{ once: true }}
             whileHover={{
-              scale: 1.05,
-              rotateX: 3,
-              rotateY: -3,
-              boxShadow: "0px 10px 40px rgba(56,189,248,0.25)",
+              scale: 1.03,
+              rotateX: 2,
+              rotateY: -2,
             }}
-            className="relative group bg-[#0f172a]/50 rounded-2xl p-8 backdrop-blur-md border border-white/10 shadow-[0_0_25px_rgba(0,0,0,0.3)] cursor-pointer transition-transform gpu"
+            className="relative group bg-[#0f172a]/50 rounded-2xl p-8 backdrop-blur-md border border-white/10 shadow-xl cursor-pointer transition-transform gpu"
           >
-            {/* Glow on Hover */}
-            <motion.div
-              className="absolute inset-0 opacity-0 group-hover:opacity-100 bg-gradient-to-r from-cyan-500/20 via-blue-500/25 to-purple-500/20 blur-2xl gpu"
-              animate={{ x: ["-100%", "100%"] }}
-              transition={{
-                duration: 4,
-                ease: "easeInOut",
-                repeat: Infinity,
-                repeatType: "mirror",
-              }}
-            />
+            {/* Glow Effect */}
+            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 bg-gradient-to-r from-cyan-500/20 via-blue-500/25 to-purple-500/20 blur-xl transition-opacity duration-500 pointer-events-none gpu" />
+
             <div className="relative z-10 text-center space-y-4">
-              <h3 className="text-2xl font-semibold text-cyan-300 group-hover:text-white transition-colors duration-500">
+              <h3 className="text-2xl font-semibold text-cyan-300 group-hover:text-white transition-colors duration-300">
                 {service.title}
               </h3>
-              <p className="text-gray-300 text-sm group-hover:text-gray-100 transition-colors duration-500">
+              <p className="text-gray-300 text-sm group-hover:text-gray-100 transition-colors duration-300">
                 {service.desc}
               </p>
             </div>
