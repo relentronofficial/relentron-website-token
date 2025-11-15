@@ -1,24 +1,38 @@
 "use client";
 
-import React, { useRef, useEffect, Suspense, memo } from "react";
+import React, { useRef, useEffect, Suspense, useState, memo } from "react";
 import { Canvas } from "@react-three/fiber";
 import { Html, Stars } from "@react-three/drei";
 import * as THREE from "three";
 import gsap from "gsap";
 
-/* ------------------------------
-   GlowingCore (lowered segments)
-   ------------------------------ */
+/* -------------------------
+   Device & perf helpers
+   ------------------------- */
+const isBrowser = typeof window !== "undefined";
+
+const isMobile = () =>
+  isBrowser && /Mobi|Android|iPhone|iPad|iPod|Opera Mini|IEMobile/i.test(navigator.userAgent);
+
+const prefersReducedMotion = () =>
+  isBrowser && window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+const saveDataMode = () =>
+  isBrowser && navigator.connection && (navigator.connection.saveData || navigator.connection.saveData === true);
+
+/* -------------------------
+   Glowing core (lightweight)
+   ------------------------- */
 function GlowingCore() {
   const mesh = useRef();
 
   useEffect(() => {
-    if (!mesh.current) return;
+    if (!mesh.current || prefersReducedMotion()) return;
     const tween = gsap.to(mesh.current.scale, {
-      x: 1.15,
-      y: 1.15,
-      z: 1.15,
-      duration: 2,
+      x: 1.12,
+      y: 1.12,
+      z: 1.12,
+      duration: 2.2,
       repeat: -1,
       yoyo: true,
       ease: "sine.inOut",
@@ -28,87 +42,79 @@ function GlowingCore() {
 
   return (
     <mesh ref={mesh}>
-      {/* lowered geometry detail for perf */}
-      <sphereGeometry args={[0.8, 32, 32]} />
+      <sphereGeometry args={[0.75, isMobile() ? 20 : 32, isMobile() ? 20 : 32]} />
       <meshStandardMaterial
-        emissive={"#00ffff"}
-        emissiveIntensity={2.2}
-        metalness={0.85}
-        roughness={0.25}
+        emissive={"#00eaff"}
+        emissiveIntensity={isMobile() ? 1.6 : 2.2}
+        metalness={0.55}
+        roughness={0.28}
       />
     </mesh>
   );
 }
 
-/* ------------------------------
-   OrbitRings (fewer segments)
-   ------------------------------ */
+/* -------------------------
+   Orbit rings (simple)
+   ------------------------- */
 function OrbitRings() {
-  const ringCount = 3;
-  return Array.from({ length: ringCount }).map((_, i) => (
+  const rings = [0, 1, 2];
+  return rings.map((i) => (
     <mesh rotation={[Math.random(), Math.random(), 0]} key={i}>
       <torusGeometry args={[2 + i * 0.45, 0.012, 8, 64]} />
-      <meshBasicMaterial color="#00ffff" transparent opacity={0.12} />
+      <meshBasicMaterial color="#00ffff" transparent opacity={0.08} />
     </mesh>
   ));
 }
 
-/* -----------------------------------------------
-   FloatingCard - memoized and deterministic pos
-   ----------------------------------------------- */
+/* -------------------------
+   FloatingCard (memo)
+   ------------------------- */
 const FloatingCard = memo(function FloatingCard({ text, color, delay, index }) {
   const ref = useRef();
 
-  // deterministic pseudo-random generator (stable)
-  const pseudoRandom = (seed) => {
-    const x = Math.sin(seed * 9999) * 10000;
+  // deterministic pseudo-random consistent positions
+  const prng = (seed) => {
+    const x = Math.sin(seed * 98765.4321) * 10000;
     return x - Math.floor(x);
   };
 
-  const posX = pseudoRandom(index * 2) * 6 - 3;
-  const posZ = pseudoRandom(index * 2 + 1) * 6 - 3;
+  const posX = prng(index * 1.23) * 5 - 2.4;
+  const posZ = prng(index * 2.17 + 0.5) * 5 - 2.4;
 
   useEffect(() => {
-    if (!ref.current) return;
-    const t1 = gsap.to(ref.current.position, {
-      y: 1.8,
+    if (!ref.current || prefersReducedMotion()) return;
+    const float = gsap.to(ref.current.position, {
+      y: 1.6,
       duration: 3 + delay,
       repeat: -1,
       yoyo: true,
       ease: "sine.inOut",
       delay,
     });
-    const t2 = gsap.to(ref.current.rotation, {
+    const rot = gsap.to(ref.current.rotation, {
       y: "+=6.283",
       duration: 12 + delay,
       repeat: -1,
       ease: "none",
     });
     return () => {
-      t1.kill();
-      t2.kill();
+      float.kill();
+      rot.kill();
     };
   }, [delay]);
 
   return (
     <mesh ref={ref} position={[posX, 0, posZ]}>
-      <planeGeometry args={[1.6, 0.95]} />
-      <meshStandardMaterial
-        color={color}
-        emissive={color}
-        emissiveIntensity={0.9}
-        metalness={0.7}
-        roughness={0.35}
-      />
+      <planeGeometry args={[1.55, 0.95]} />
+      <meshStandardMaterial color={color} emissive={color} emissiveIntensity={0.8} metalness={0.6} roughness={0.33} />
       <Html center>
         <div
           className="text-white text-sm font-semibold px-3 py-2 rounded-full"
           style={{
             whiteSpace: "nowrap",
-            background:
-              "linear-gradient(90deg, rgba(16,185,129,0.08), rgba(59,130,246,0.08))",
+            background: "linear-gradient(90deg, rgba(16,185,129,0.06), rgba(59,130,246,0.06))",
             backdropFilter: "blur(4px)",
-            boxShadow: "0 6px 18px rgba(0,0,0,0.45)",
+            boxShadow: "0 6px 18px rgba(0,0,0,0.35)",
           }}
         >
           {text}
@@ -118,78 +124,136 @@ const FloatingCard = memo(function FloatingCard({ text, color, delay, index }) {
   );
 });
 
-/* ------------------------------
-   Scene content
-   ------------------------------ */
-function SoftwareScene() {
+/* -------------------------
+   3D Scene
+   ------------------------- */
+function FuturisticScene() {
   return (
     <>
-      <ambientLight intensity={0.28} />
-      <pointLight position={[0, 0, 5]} intensity={1.6} color={"#00ffff"} />
+      <ambientLight intensity={0.26} />
+      <pointLight position={[0, 0, 5]} intensity={1.4} color={"#00eaff"} />
 
-      {/* reduced stars for perf */}
-      <Stars radius={50} depth={30} count={400} factor={2} saturation={0} fade={true} />
+      <Stars
+        radius={50}
+        depth={30}
+        count={isMobile() ? 160 : 420}
+        factor={2}
+        saturation={0}
+        fade
+      />
 
       <GlowingCore />
       <OrbitRings />
 
       <FloatingCard text="CRM" color="#3b82f6" delay={0.2} index={1} />
-      <FloatingCard text="HMS" color="#8b5cf6" delay={0.5} index={2} />
+      <FloatingCard text="HMS" color="#a855f7" delay={0.5} index={2} />
       <FloatingCard text="LMS" color="#06b6d4" delay={0.8} index={3} />
       <FloatingCard text="Billing" color="#f43f5e" delay={1.1} index={4} />
       <FloatingCard text="ERP" color="#14b8a6" delay={1.4} index={5} />
-      {/* fewer cards keeps scene lighter */}
     </>
   );
 }
 
-/* ------------------------------
-   Main Component (responsive)
-   ------------------------------ */
+/* -------------------------
+   Main Component
+   ------------------------- */
 export default function SoftwareDevelopment() {
   const containerRef = useRef();
+  const [mount3D, setMount3D] = useState(false);
 
+  // lazy mount canvas when section is near viewport
+  useEffect(() => {
+    if (!isBrowser) {
+      setMount3D(false);
+      return;
+    }
+
+    // If user requests reduced motion or save-data, skip heavy 3D
+    if (prefersReducedMotion() || saveDataMode() || isMobile()) {
+      setMount3D(false);
+      return;
+    }
+
+    const el = containerRef.current;
+    if (!el) {
+      setMount3D(true);
+      return;
+    }
+
+    const obs = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setMount3D(true);
+          obs.disconnect();
+        }
+      },
+      { rootMargin: "300px" } // pre-mount slightly before visible
+    );
+
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+
+  // small entrance animation for the wrapper (lightweight)
   useEffect(() => {
     if (!containerRef.current) return;
     const ctx = gsap.context(() => {
       gsap.fromTo(
         containerRef.current,
-        { opacity: 0, y: 60 },
-        { opacity: 1, y: 0, duration: 1.2, ease: "power3.out" }
+        { opacity: 0, y: 50 },
+        { opacity: 1, y: 0, duration: 1.1, ease: "power3.out" }
       );
     }, containerRef);
     return () => ctx.revert();
   }, []);
 
+  // fallback image path (place in /public)
+  const fallbackSrc = "/software-fallback.png";
+
   return (
     <section
       ref={containerRef}
-      className="relative min-h-screen w-full bg-gradient-to-b from-black via-gray-900 to-gray-950 overflow-hidden flex flex-col justify-center items-center text-center py-12"
+      id="software"
+      className="relative min-h-screen w-full bg-gradient-to-b from-black via-gray-900 to-gray-950 overflow-hidden flex flex-col justify-center items-center text-center py-16"
     >
-      <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500 mb-3 drop-shadow-[0_0_18px_rgba(0,255,255,0.12)]">
+      <h1 className="text-4xl md:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500 mb-4">
         Software Development
       </h1>
 
-      <p className="text-gray-300 max-w-3xl px-6 text-sm md:text-base mb-8">
+      <p className="text-gray-300 max-w-3xl px-6 text-sm md:text-base mb-10">
         We build smart and scalable software — CRM, HMS, LMS, ERP, Billing, and more —
-        that streamline processes and boost productivity.
+        engineered for speed, automation, and high performance.
       </p>
 
-      <div className="w-full h-[70vh] md:h-[64vh] lg:h-[68vh] max-w-6xl">
-        <Canvas
-          camera={{ position: [0, 0, 7], fov: 45 }}
-          dpr={[1, Math.min(typeof window !== "undefined" ? window.devicePixelRatio : 1.5, 1.5)]}
-          gl={{
-            antialias: false, // off for mobile perf
-            powerPreference: "high-performance",
-            toneMapping: THREE.ACESFilmicToneMapping,
-          }}
-          style={{ width: "100%", height: "100%" }}
-        >
-          <Suspense fallback={null}>
-            <SoftwareScene />
-          </Suspense>
-        </Canvas>
+      <div className="w-full h-[70vh] md:h-[64vh] lg:h-[72vh] max-w-6xl">
+        {mount3D ? (
+          <Canvas
+            camera={{ position: [0, 0, 7], fov: 45 }}
+            dpr={
+              isMobile()
+                ? 1
+                : [1, Math.min(isBrowser ? window.devicePixelRatio || 1 : 1, 1.4)]
+            }
+            gl={{
+              antialias: false, // simpler for perf
+              powerPreference: "high-performance",
+              toneMapping: THREE.ACESFilmicToneMapping,
+            }}
+            style={{ width: "100%", height: "100%" }}
+          >
+            <Suspense fallback={null}>
+              <FuturisticScene />
+            </Suspense>
+          </Canvas>
+        ) : (
+          <div className="w-full h-full flex items-center justify-center">
+            <img
+              src={fallbackSrc}
+              alt="Software illustration"
+              className="w-56 md:w-80 opacity-80 select-none pointer-events-none"
+            />
+          </div>
+        )}
       </div>
     </section>
   );

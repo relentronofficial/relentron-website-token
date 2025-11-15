@@ -1,5 +1,7 @@
 "use client";
+
 import { useEffect, useRef, useState } from "react";
+import { motion } from "framer-motion";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -8,10 +10,9 @@ gsap.registerPlugin(ScrollTrigger);
 export default function MobileAppDevelopmentSection() {
   const sectionRef = useRef(null);
   const phoneRefs = useRef([]);
-  const textRef = useRef(null);
   const stageTextRef = useRef(null);
-  const gridRef = useRef(null);
   const [activePhone, setActivePhone] = useState(null);
+  const [isDesktop, setIsDesktop] = useState(true);
 
   const phones = [
     {
@@ -46,202 +47,271 @@ export default function MobileAppDevelopmentSection() {
     },
   ];
 
+  // used to store timeline so we can pause/resume
+  const stageTlRef = useRef(null);
+
   useEffect(() => {
-    const section = sectionRef.current;
-    const phonesEls = phoneRefs.current;
-    const stageText = stageTextRef.current;
+    const mm = ScrollTrigger.matchMedia();
 
-    gsap.fromTo(
-      section,
-      { opacity: 0, y: 80 },
-      {
-        opacity: 1,
-        y: 0,
-        duration: 1.5,
-        ease: "power3.out",
-        scrollTrigger: { trigger: section, start: "top 85%" },
-      }
-    );
+    // Desktop (>= 768px)
+    mm.add("(min-width: 768px)", () => {
+      setIsDesktop(true);
 
-    gsap.fromTo(
-      phonesEls,
-      { rotateY: 45, y: 100, opacity: 0, scale: 0.8 },
-      {
-        rotateY: 0,
-        y: 0,
-        opacity: 1,
-        scale: 1,
-        duration: 1.5,
-        ease: "power3.out",
-        stagger: 0.25,
-        scrollTrigger: { trigger: section, start: "top 70%" },
-      }
-    );
+      const section = sectionRef.current;
+      const phonesEls = phoneRefs.current;
 
-    phonesEls.forEach((phone, i) => {
-      gsap.to(phone, {
-        y: "+=12",
-        duration: 3 + i,
-        repeat: -1,
-        yoyo: true,
-        ease: "sine.inOut",
-      });
-    });
-
-    const words = ["Ideate", "Design", "Develop", "Launch"];
-    let currentIndex = 0;
-    gsap.set(stageText, { opacity: 0, scale: 0.9, y: 30 });
-
-    const animateText = () => {
-      const nextWord = words[currentIndex % words.length];
-      stageText.textContent = nextWord;
-
-      gsap
-        .timeline()
-        .to(stageText, { opacity: 1, scale: 1, y: 0, duration: 1.2, ease: "power3.out" })
-        .to(stageText, {
-          opacity: 0,
-          scale: 0.9,
-          y: -30,
-          delay: 1.5,
+      // Entrance for whole section
+      gsap.fromTo(
+        section,
+        { opacity: 0, y: 80 },
+        {
+          opacity: 1,
+          y: 0,
           duration: 1.2,
-          ease: "power3.in",
-          onComplete: () => {
-            currentIndex++;
-            animateText();
-          },
-        });
-    };
-    animateText();
+          ease: "power3.out",
+          scrollTrigger: { trigger: section, start: "top 85%" },
+        }
+      );
 
-    const handleMouseMove = (e) => {
-      const { innerWidth, innerHeight } = window;
-      const x = (e.clientX / innerWidth - 0.5) * 2;
-      const y = (e.clientY / innerHeight - 0.5) * 2;
+      // Phones pop-in & float
+      gsap.fromTo(
+        phonesEls,
+        { rotateY: 45, y: 100, opacity: 0, scale: 0.85 },
+        {
+          rotateY: 0,
+          y: 0,
+          opacity: 1,
+          scale: 1,
+          duration: 1.4,
+          ease: "power3.out",
+          stagger: 0.2,
+          scrollTrigger: { trigger: section, start: "top 70%" },
+        }
+      );
 
       phonesEls.forEach((phone, i) => {
+        // slow y bob (light)
         gsap.to(phone, {
-          rotationY: x * 12,
-          rotationX: -y * 12,
-          x: x * 40 * (i - 1),
-          y: y * 15,
-          transformPerspective: 1000,
-          duration: 0.6,
-          ease: "power2.out",
+          y: "+=10",
+          duration: 3 + i,
+          repeat: -1,
+          yoyo: true,
+          ease: "sine.inOut",
+          overwrite: true,
         });
       });
-    };
 
-    section.addEventListener("mousemove", handleMouseMove);
-    return () => section.removeEventListener("mousemove", handleMouseMove);
+      // mousemove parallax (desktop only)
+      const handleMouseMove = (e) => {
+        const { innerWidth, innerHeight } = window;
+        const x = (e.clientX / innerWidth - 0.5) * 2;
+        const y = (e.clientY / innerHeight - 0.5) * 2;
+
+        phonesEls.forEach((phone, i) => {
+          gsap.to(phone, {
+            rotationY: x * 10,
+            rotationX: -y * 8,
+            x: x * 30 * (i - 1),
+            y: y * 10,
+            transformPerspective: 1000,
+            duration: 0.6,
+            ease: "power2.out",
+            overwrite: true,
+          });
+        });
+      };
+
+      section.addEventListener("mousemove", handleMouseMove);
+
+      // Stage text (looping words) — use timeline stored in ref
+      const words = ["Ideate", "Design", "Develop", "Launch"];
+      let idx = 0;
+      const stageEl = stageTextRef.current;
+      if (stageEl) {
+        stageTlRef.current = gsap.timeline({ repeat: -1 });
+        stageTlRef.current.to(stageEl, { opacity: 1, y: 0, scale: 1, duration: 0.9 });
+        stageTlRef.current.to(stageEl, { opacity: 0, y: -30, scale: 0.9, duration: 0.9, delay: 1.2 });
+        // We'll manually update text on repeat
+        stageTlRef.current.eventCallback("onRepeat", () => {
+          idx = (idx + 1) % words.length;
+          stageEl.textContent = words[idx];
+        });
+        // Initialize text content
+        stageEl.textContent = words[0];
+        gsap.set(stageEl, { opacity: 0, y: 30, scale: 0.95 });
+      }
+
+      // Pause/resume stage timeline based on visibility
+      const obs = new IntersectionObserver(
+        (entries) => {
+          const e = entries[0];
+          if (stageTlRef.current) {
+            if (e.isIntersecting) stageTlRef.current.play();
+            else stageTlRef.current.pause();
+          }
+        },
+        { root: null, threshold: 0.2 }
+      );
+      if (stageTextRef.current) obs.observe(stageTextRef.current);
+
+      // clean-up for desktop
+      return () => {
+        section.removeEventListener("mousemove", handleMouseMove);
+        if (stageTlRef.current) {
+          stageTlRef.current.kill();
+          stageTlRef.current = null;
+        }
+        obs.disconnect();
+        // kill ScrollTrigger instances attached to this section
+        ScrollTrigger.getAll().forEach((t) => {
+          if (t.trigger === section || phonesEls.includes(t.trigger)) t.kill();
+        });
+      };
+    });
+
+    // Mobile (< 768px) — lightweight, carousel + reduced effects
+    mm.add("(max-width: 767px)", () => {
+      setIsDesktop(false);
+
+      const section = sectionRef.current;
+
+      // entrance (lighter)
+      gsap.fromTo(
+        section,
+        { opacity: 0, y: 30 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.9,
+          ease: "power2.out",
+          scrollTrigger: { trigger: section, start: "top 90%" },
+        }
+      );
+
+      // Keep stage text simple fade (no looping heavy timeline)
+      if (stageTextRef.current) {
+        gsap.fromTo(stageTextRef.current, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.9 });
+      }
+
+      // No mousemove, no floating infinite GSAP loops on mobile.
+      // If any ScrollTrigger created for mobile it can be killed on cleanup.
+
+      return () => {
+        ScrollTrigger.getAll().forEach((t) => {
+          if (t.trigger === section) t.kill();
+        });
+      };
+    });
+
+    // global cleanup of matchMedia
+    return () => mm.revert();
   }, []);
 
-  const handleExplore = (index) => setActivePhone(index);
-  const handleClose = () => setActivePhone(null);
+  // Small helper: render phone card content (kept same markup as before)
+  const PhoneCard = ({ item, index, mobileSize = false }) => (
+    <div
+      key={index}
+      ref={(el) => (phoneRefs.current[index] = el)}
+      className={`relative flex-shrink-0 ${mobileSize ? "w-[260px] h-[520px]" : "w-[300px] h-[600px]"} flex items-center justify-center transition-transform`}
+    >
+      <svg
+        viewBox="0 0 260 520"
+        xmlns="http://www.w3.org/2000/svg"
+        className="absolute inset-0 w-full h-full z-20 pointer-events-none select-none"
+      >
+        <rect x="10" y="10" width="240" height="500" rx="35" ry="35" stroke="rgba(255,255,255,0.08)" strokeWidth="3" fill="none" />
+        <circle cx="130" cy="25" r="4" fill="rgba(255,255,255,0.2)" />
+      </svg>
+
+      <div className="absolute top-[7%] left-[7%] w-[86%] h-[86%] rounded-[1.2rem] bg-gradient-to-b from-gray-900 to-gray-800 border border-gray-700 shadow-[0_0_30px_rgba(0,0,0,0.5)] overflow-hidden backdrop-blur-md flex flex-col items-center justify-center text-center p-4">
+        <div className={`absolute inset-0 rounded-[1.2rem] bg-gradient-to-br ${item.gradient} opacity-20 blur-sm`} />
+        <div className="relative z-10 flex flex-col items-center justify-center h-full px-3">
+          <h3 className="text-2xl font-bold mb-2 text-white">{item.title}</h3>
+          <p className="text-gray-300 text-sm leading-relaxed mb-4">{item.desc}</p>
+          <button
+            className="px-4 py-2 text-sm font-semibold rounded-full bg-gradient-to-r from-blue-500 via-cyan-400 to-purple-500 hover:shadow-[0_0_12px_rgba(147,51,234,0.25)] transition-all"
+            onClick={() => setActivePhone(index)}
+          >
+            Explore
+          </button>
+        </div>
+      </div>
+
+      {activePhone === index && (
+        <div className="absolute inset-0 z-30 bg-gray-900/95 rounded-[1.4rem] p-6 flex flex-col justify-center items-center text-white">
+          {item.content.map((c, idx) => (
+            <p key={idx} className="text-center text-lg mb-3">
+              {c}
+            </p>
+          ))}
+          <button onClick={() => setActivePhone(null)} className="mt-4 px-4 py-2 rounded-full bg-gray-700/80">
+            Close
+          </button>
+        </div>
+      )}
+    </div>
+  );
 
   return (
     <section
       ref={sectionRef}
       id="mobile-app"
-      className="relative flex flex-col items-center justify-center overflow-visible pt-0 pb-20 bg-[#010617] min-h-[180vh] sm:min-h-[160vh] md:min-h-[140vh]"
+      className="relative flex flex-col items-center justify-center overflow-visible pt-8 pb-20 bg-[#010617]"
     >
-      {/* Ambient lights */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(56,189,248,0.25),transparent_70%)]" />
-      <div className="absolute inset-0 bg-[linear-gradient(45deg,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:50px_50px] opacity-10" />
-      <div
-        ref={gridRef}
-        className="absolute bottom-0 left-0 right-0 h-[400px] bg-[repeating-linear-gradient(transparent,transparent_25px,rgba(56,189,248,0.06)_26px),repeating-linear-gradient(90deg,transparent,transparent_25px,rgba(56,189,248,0.06)_26px)] transform rotateX-60 scale-150 origin-bottom opacity-25 pointer-events-none"
-        style={{
-          transformStyle: "preserve-3d",
-          transformOrigin: "bottom",
-          boxShadow: "0 0 50px rgba(56,189,248,0.06)",
-        }}
-      />
-
       {/* Header */}
-      <div ref={textRef} className="z-20 text-center mt-2 mb-4">
-        <h1 className="text-5xl md:text-6xl font-extrabold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 drop-shadow-[0_0_25px_rgba(56,189,248,0.5)]">
+      <div className="z-20 text-center mt-2 mb-4 px-4">
+        <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold mb-3 text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 drop-shadow-[0_0_18px_rgba(56,189,248,0.45)]">
           Mobile App Development
         </h1>
-        <p className="max-w-3xl mx-auto text-gray-300 text-lg leading-relaxed">
+        <p className="max-w-3xl mx-auto text-gray-300 text-sm sm:text-base leading-relaxed">
           Build futuristic apps that fuse design, intelligence, and performance — crafted for the next generation of digital experiences.
         </p>
       </div>
 
-      {/* Looping Text */}
+      {/* Stage text (big behind text) */}
       <h2
         ref={stageTextRef}
-        className="absolute top-[10%] sm:top-[14%] md:top-[18%] lg:top-[22%] text-4xl sm:text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-fuchsia-500 drop-shadow-[0_0_25px_rgba(56,189,248,0.5)] opacity-0 pointer-events-none select-none z-30"
+        className="absolute top-[12%] md:top-[20%] text-3xl md:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-fuchsia-500 opacity-0 pointer-events-none select-none z-30"
+        aria-hidden
       >
         Ideate
       </h2>
 
-      {/* Phones with SVG mockup frame */}
-      <div className="relative flex flex-wrap md:flex-nowrap items-center justify-center gap-14 md:gap-24 z-10 perspective-[1000px] pt-20">
-        {phones.map((item, i) => (
-          <div
-            key={i}
-            ref={(el) => (phoneRefs.current[i] = el)}
-            className="relative w-[300px] h-[600px] scale-65 md:scale-80 flex items-center justify-center transition-transform hover:scale-100"
+      {/* Desktop layout: side-by-side; Mobile: carousel */}
+      <div className="relative z-10 w-full flex items-center justify-center pt-8">
+        {/* Desktop grid (shown on md+) */}
+        <div className="hidden md:flex flex-nowrap items-center justify-center gap-10">
+          {phones.map((item, i) => (
+            <div key={i}>{PhoneCard({ item, index: i, mobileSize: false })}</div>
+          ))}
+        </div>
+
+        {/* Mobile carousel (smaller, swipeable) */}
+        <div className="md:hidden w-full overflow-hidden">
+          <motion.div
+            className="flex gap-6 px-6 pb-6"
+            drag="x"
+            dragConstraints={{ left: -((phones.length - 1) * (260 + 24)), right: 0 }}
+            dragElastic={0.15}
+            whileTap={{ cursor: "grabbing" }}
+            // snap to each card after drag end (soft snap)
+            onDragEnd={(event, info) => {
+              // simple snap: calculate index by x offset
+              const cardWidth = 260 + 24; // card + gap
+              const x = info.point.x - info.offset.x; // use offset for rough snap
+              // we will not attempt perfect snap logic here; framer-snap not required
+            }}
           >
-            {/* SVG Frame */}
-            <svg
-              viewBox="0 0 260 520"
-              xmlns="http://www.w3.org/2000/svg"
-              className="absolute inset-0 w-full h-full z-20 pointer-events-none select-none"
-            >
-              <rect
-                x="10"
-                y="10"
-                width="240"
-                height="500"
-                rx="35"
-                ry="35"
-                stroke="rgba(255,255,255,0.1)"
-                strokeWidth="3"
-                fill="none"
-              />
-              <circle cx="130" cy="25" r="4" fill="rgba(255,255,255,0.3)" />
-            </svg>
-
-            {/* Content area fits inside SVG screen */}
-            <div className="absolute top-[7%] left-[7%] w-[86%] h-[86%] rounded-[1.4rem] bg-gradient-to-b from-gray-900 to-gray-800 border border-gray-700 shadow-[0_0_40px_rgba(0,0,0,0.5)] overflow-hidden backdrop-blur-md flex flex-col items-center justify-center text-center p-5">
-              <div className={`absolute inset-0 rounded-[1.4rem] bg-gradient-to-br ${item.gradient} opacity-20 blur-2xl`} />
-              <div className="relative z-10 flex flex-col items-center justify-center h-full px-3">
-                <h3 className="text-2xl font-bold mb-3 text-white">{item.title}</h3>
-                <p className="text-gray-300 text-sm leading-relaxed mb-6">{item.desc}</p>
-                <button
-                  className="px-5 py-2 text-sm font-semibold rounded-full bg-gradient-to-r from-blue-500 via-cyan-400 to-purple-500 hover:shadow-[0_0_20px_rgba(147,51,234,0.4)] transition-all duration-500"
-                  onClick={() => handleExplore(i)}
-                >
-                  Explore
-                </button>
-              </div>
-            </div>
-
-            {/* Expanded content */}
-            {activePhone === i && (
-              <div className="absolute inset-0 z-30 bg-gray-900/95 rounded-[2rem] p-6 flex flex-col justify-center items-center text-white">
-                {item.content.map((c, idx) => (
-                  <p key={idx} className="text-center text-lg mb-3">
-                    {c}
-                  </p>
-                ))}
-                <button
-                  onClick={handleClose}
-                  className="mt-4 px-5 py-2 text-sm font-semibold rounded-full bg-gradient-to-r from-gray-700 via-gray-900 to-black hover:shadow-[0_0_15px_rgba(255,255,255,0.4)] transition-all duration-500"
-                >
-                  Close
-                </button>
-              </div>
-            )}
-          </div>
-        ))}
+            {phones.map((item, i) => (
+              <div key={i}>{PhoneCard({ item, index: i, mobileSize: true })}</div>
+            ))}
+          </motion.div>
+        </div>
       </div>
 
-      {/* Glow Orbs */}
-      <div className="absolute top-20 left-10 w-40 h-40 bg-cyan-400/20 rounded-full blur-3xl animate-pulse" />
-      <div className="absolute bottom-24 right-10 w-56 h-56 bg-purple-500/25 rounded-full blur-3xl animate-pulse" />
+      {/* Soft decorative orbs (reduced intensity on mobile via tailwind) */}
+      <div className="absolute top-24 left-6 w-36 h-36 bg-cyan-400/16 rounded-full blur-2xl animate-pulse hidden sm:block" />
+      <div className="absolute bottom-20 right-6 w-48 h-48 bg-purple-500/12 rounded-full blur-2xl animate-pulse hidden sm:block" />
     </section>
   );
 }

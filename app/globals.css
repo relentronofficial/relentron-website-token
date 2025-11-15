@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* ---------------------------------------
+   ROOT THEME VARIABLES
+--------------------------------------- */
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -19,31 +22,35 @@
   }
 }
 
+/* ---------------------------------------
+   GLOBAL BODY STYLING
+--------------------------------------- */
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
-}
 
-/* Water-like animation */
-body {
+  /* Futuristic gradient background */
   background: linear-gradient(120deg, #0f2027, #203a43, #2c5364);
-  transition: background 10s ease-in-out;
+  background-size: 200% 200%;
+  animation: bgShift 12s ease-in-out infinite;
   overflow-x: hidden;
 }
 
+/* Smooth shifting gradient */
+@keyframes bgShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* ---------------------------------------
+   GLITTER SWIPE HIGHLIGHT EFFECT
+--------------------------------------- */
 @keyframes glitter {
-  0% {
-    transform: translateX(-100%) rotate(15deg);
-    opacity: 0.2;
-  }
-  50% {
-    opacity: 0.6;
-  }
-  100% {
-    transform: translateX(100%) rotate(15deg);
-    opacity: 0.2;
-  }
+  0% { transform: translateX(-100%) rotate(15deg); opacity: 0.15; }
+  50% { opacity: 0.45; }
+  100% { transform: translateX(100%) rotate(15deg); opacity: 0.15; }
 }
 
 .animate-glitter {
@@ -55,72 +62,67 @@ body {
   );
   animation: glitter 3.5s ease-in-out infinite;
   mix-blend-mode: overlay;
+  pointer-events: none;
 }
 
-/* .water-effect {
+/* ---------------------------------------
+   WATER SHIMMER EFFECT
+--------------------------------------- */
+@keyframes shimmer {
+  0% { transform: translate(0, 0); }
+  50% { transform: translate(-2%, 1.5%); }
+  100% { transform: translate(0, 0); }
+}
+
+.water-effect {
   position: fixed;
   inset: 0;
-  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.05), transparent 70%);
+  background: radial-gradient(
+    circle at 30% 30%,
+    rgba(255, 255, 255, 0.05),
+    transparent 70%
+  );
   mix-blend-mode: overlay;
-  animation: shimmer 6s infinite linear;
+  animation: shimmer 8s infinite linear;
   pointer-events: none;
   z-index: 0;
 }
 
 .water-effect--soft {
-  animation: shimmer 10s infinite linear reverse;
-} */
-
-@keyframes shimmer {
-  0% { transform: translateX(0) translateY(0); }
-  50% { transform: translateX(-2%) translateY(2%); }
-  100% { transform: translateX(0) translateY(0); }
+  animation: shimmer 12s infinite linear reverse;
 }
 
-
-
-
+/* ---------------------------------------
+   RECAPTCHA RESPONSIVE SCALE FIX
+--------------------------------------- */
 @layer utilities {
-  @media (max-width: 1024px) {
-    .g-recaptcha-scale {
-      transform: scale(0.95);
-    }
-  }
-  @media (max-width: 768px) {
-    .g-recaptcha-scale {
-      transform: scale(0.9);
-    }
-  }
-  @media (max-width: 640px) {
-    .g-recaptcha-scale {
-      transform: scale(0.85);
-    }
-  }
-  @media (max-width: 480px) {
-    .g-recaptcha-scale {
-      transform: scale(0.75);
-    }
-  }
-  @media (max-width: 360px) {
-    .g-recaptcha-scale {
-      transform: scale(0.7);
-    }
-  }
+  @media (max-width: 1024px) { .g-recaptcha-scale { transform: scale(0.95); } }
+  @media (max-width: 768px) { .g-recaptcha-scale { transform: scale(0.9); } }
+  @media (max-width: 640px) { .g-recaptcha-scale { transform: scale(0.85); } }
+  @media (max-width: 480px) { .g-recaptcha-scale { transform: scale(0.75); } }
+  @media (max-width: 360px) { .g-recaptcha-scale { transform: scale(0.7); } }
 }
 
-
+/* ---------------------------------------
+   THREE.JS CANVAS FIX
+--------------------------------------- */
 canvas {
   width: 100% !important;
   height: 100% !important;
+  display: block;        /* Removes scrollbars */
+  touch-action: none;    /* Improves 3D interactions */
 }
 
 @media (max-width: 768px) {
   canvas {
-    transform: scale(0.7);
+    transform: scale(0.8);
+    transform-origin: center;
   }
 }
 
-
+/* ---------------------------------------
+   GPU OPTIMIZATION UTILITY
+--------------------------------------- */
 .gpu {
   will-change: transform, opacity;
   transform: translateZ(0);
