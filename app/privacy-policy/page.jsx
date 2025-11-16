@@ -1,6 +1,7 @@
 "use client";
 import { motion } from "framer-motion";
 
+
 export default function PrivacyPolicy() {
   return (
     <div className="min-h-screen bg-[#050b1a] text-white">

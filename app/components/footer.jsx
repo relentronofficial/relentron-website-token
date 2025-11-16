@@ -80,7 +80,10 @@ export default function Footer() {
                 <Mail size={16} /> relentronofficial@gmail.com
               </li>
               <li className="flex items-center gap-2">
-                <Phone size={16} /> +91 7010834661
+                <Phone size={16} /> +91 7806928166
+              </li>
+              <li className="flex items-center gap-2">
+                <MapPin size={16} /> Chennai, India
               </li>
               <li className="flex items-center gap-2">
                 <MapPin size={16} /> Perambalur, India

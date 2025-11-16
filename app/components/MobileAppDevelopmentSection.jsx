@@ -268,15 +268,6 @@ export default function MobileAppDevelopmentSection() {
         </p>
       </div>
 
-      {/* Stage text (big behind text) */}
-      <h2
-        ref={stageTextRef}
-        className="absolute top-[12%] md:top-[20%] text-3xl md:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-fuchsia-500 opacity-0 pointer-events-none select-none z-30"
-        aria-hidden
-      >
-        Ideate
-      </h2>
-
       {/* Desktop layout: side-by-side; Mobile: carousel */}
       <div className="relative z-10 w-full flex items-center justify-center pt-8">
         {/* Desktop grid (shown on md+) */}

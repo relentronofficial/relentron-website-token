@@ -7,7 +7,7 @@ import dynamic from "next/dynamic";
 
 const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
 
-// ✅ Load reCAPTCHA only when needed
+// Lazy load Recaptcha
 const LazyReCAPTCHA = dynamic(() => import("react-google-recaptcha"), {
   ssr: false,
 });
@@ -26,14 +26,19 @@ export default function EnquiryForm({ floating = true, position: propPosition = 
   const [errors, setErrors] = useState({});
   const [status, setStatus] = useState("");
 
-  const handleOpen = () => {
-    setIsOpen(true);
-    setTimeout(() => setLoadRecaptcha(true), 300); // Load after animation starts
+  // ⭐ Position Classes (NEW)
+  const positionClasses = {
+    right: "right-6 bottom-6",
+    left: "left-6 bottom-6",
+    center: "left-1/2 -translate-x-1/2 bottom-6", // ← Center floating button
   };
 
-  const handleClose = () => {
-    setIsOpen(false);
+  const handleOpen = () => {
+    setIsOpen(true);
+    setTimeout(() => setLoadRecaptcha(true), 300);
   };
+
+  const handleClose = () => setIsOpen(false);
 
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -51,6 +56,7 @@ export default function EnquiryForm({ floating = true, position: propPosition = 
     if (!form.service) err.service = "Select service";
     if (!form.message.trim()) err.message = "Message required";
     if (!form.recaptchaToken) err.recaptcha = "Complete reCAPTCHA";
+
     setErrors(err);
     return Object.keys(err).length === 0;
   };
@@ -81,94 +87,25 @@ export default function EnquiryForm({ floating = true, position: propPosition = 
     }
   };
 
-  const Input = ({ name, placeholder, type = "text" }) => (
-    <div>
-      <input
-        type={type}
-        name={name}
-        value={form[name]}
-        onChange={handleChange}
-        placeholder={placeholder}
-        className={`w-full px-4 py-2 rounded-lg bg-[#0f152d] border ${
-          errors[name] ? "border-red-500" : "border-white/10"
-        } text-white placeholder-gray-500 focus:ring-2 focus:ring-cyan-500`}
-      />
-      {errors[name] && <p className="text-xs text-red-400">{errors[name]}</p>}
-    </div>
-  );
-
-  const FormFields = (
-    <>
-      <Input name="name" placeholder="Name" />
-      <Input name="email" type="email" placeholder="Email" />
-      <Input name="phone" placeholder="Phone (10 digits)" type="tel" />
-
-      {/* Service */}
-      <div>
-        <select
-          name="service"
-          value={form.service}
-          onChange={handleChange}
-          className={`w-full px-4 py-2 rounded-lg bg-[#0f152d] border ${
-            errors.service ? "border-red-500" : "border-white/10"
-          } text-white`}
-        >
-          <option value="">Select a service</option>
-          <option value="Website">Website</option>
-          <option value="Mobile App">Mobile App</option>
-          <option value="Software">Software</option>
-          <option value="Digital Marketing">Digital Marketing</option>
-        </select>
-        {errors.service && (
-          <p className="text-xs text-red-400">{errors.service}</p>
-        )}
-      </div>
-
-      {/* Message */}
-      <div>
-        <textarea
-          name="message"
-          rows="3"
-          value={form.message}
-          onChange={handleChange}
-          placeholder="Message"
-          className={`w-full px-4 py-2 rounded-lg bg-[#0f152d] border ${
-            errors.message ? "border-red-500" : "border-white/10"
-          } text-white placeholder-gray-500 focus:ring-2 focus:ring-cyan-500`}
-        />
-        {errors.message && (
-          <p className="text-xs text-red-400">{errors.message}</p>
-        )}
-      </div>
-
-      {/* reCAPTCHA (only loaded when popup is open) */}
-      {loadRecaptcha && (
-        <div className="flex justify-center my-3">
-          <LazyReCAPTCHA
-            sitekey="6LfXbwssAAAAAEBQvv_hYtHm36-zlr8Z9AUS9Cqh"
-            onChange={handleRecaptchaChange}
-            theme="dark"
-            size={isMobile ? "compact" : "normal"}
-          />
-        </div>
-      )}
-      {errors.recaptcha && (
-        <p className="text-xs text-red-400">{errors.recaptcha}</p>
-      )}
-    </>
-  );
-
   return (
     <>
-      {/* Floating Button */}
-      <motion.button
-        onClick={handleOpen}
-        whileHover={!isMobile && { scale: 1.1 }}
-        whileTap={{ scale: 0.95 }}
-        className="fixed bottom-6 right-6 z-50 px-5 py-3 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 text-white rounded-full shadow-lg"
-      >
-        Enquire Now
-      </motion.button>
+      {/* 🌐 Floating Button — NOW CENTERABLE */}
+      {floating && (
+        <motion.button
+          onClick={handleOpen}
+          whileHover={!isMobile && { scale: 1.1 }}
+          whileTap={{ scale: 0.95 }}
+          className={`
+            fixed z-50 
+            ${positionClasses[propPosition]} 
+            px-5 py-3 rounded-full text-white
+            bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600
+            shadow-lg shadow-cyan-500/30
+          `}
+        >
+          Enquire Now
+        </motion.button>
+      )}
 
       {/* Popup */}
       <AnimatePresence>
@@ -181,24 +118,12 @@ export default function EnquiryForm({ floating = true, position: propPosition = 
             exit={{ opacity: 0 }}
           >
             <motion.div
-              initial={{
-                opacity: 0,
-                y: 40,
-                scale: isMobile ? 1 : 0.9,
-              }}
-              animate={{
-                opacity: 1,
-                y: 0,
-                scale: 1,
-              }}
-              exit={{
-                opacity: 0,
-                y: 40,
-              }}
+              initial={{ opacity: 0, y: 40, scale: isMobile ? 1 : 0.9 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 40 }}
               transition={{ duration: 0.35 }}
               className="relative bg-[#0a0f24] border border-cyan-400/30 rounded-2xl p-8 w-[90%] max-w-md shadow-xl"
             >
-              {/* Close button */}
               <button
                 onClick={handleClose}
                 className="absolute top-3 right-3 text-gray-400 hover:text-white"
@@ -211,7 +136,88 @@ export default function EnquiryForm({ floating = true, position: propPosition = 
               </h2>
 
               <form onSubmit={handleSubmit} className="space-y-4">
-                {FormFields}
+                {/* Inputs */}
+                <input
+                  type="text"
+                  name="name"
+                  placeholder="Name"
+                  value={form.name}
+                  onChange={handleChange}
+                  className={`w-full px-4 py-2 rounded-lg bg-[#0f152d] border ${
+                    errors.name ? "border-red-500" : "border-white/10"
+                  } text-white`}
+                />
+                {errors.name && <p className="text-xs text-red-400">{errors.name}</p>}
+
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="Email"
+                  value={form.email}
+                  onChange={handleChange}
+                  className={`w-full px-4 py-2 rounded-lg bg-[#0f152d] border ${
+                    errors.email ? "border-red-500" : "border-white/10"
+                  } text-white`}
+                />
+                {errors.email && <p className="text-xs text-red-400">{errors.email}</p>}
+
+                <input
+                  type="tel"
+                  name="phone"
+                  placeholder="Phone (10 digits)"
+                  value={form.phone}
+                  onChange={handleChange}
+                  className={`w-full px-4 py-2 rounded-lg bg-[#0f152d] border ${
+                    errors.phone ? "border-red-500" : "border-white/10"
+                  } text-white`}
+                />
+                {errors.phone && <p className="text-xs text-red-400">{errors.phone}</p>}
+
+                {/* Service dropdown */}
+                <select
+                  name="service"
+                  value={form.service}
+                  onChange={handleChange}
+                  className={`w-full px-4 py-2 rounded-lg bg-[#0f152d] border ${
+                    errors.service ? "border-red-500" : "border-white/10"
+                  } text-white`}
+                >
+                  <option value="">Select a service</option>
+                  <option value="Website">Website</option>
+                  <option value="Mobile App">Mobile App</option>
+                  <option value="Software">Software</option>
+                  <option value="Digital Marketing">Digital Marketing</option>
+                </select>
+
+                {errors.service && <p className="text-xs text-red-400">{errors.service}</p>}
+
+                <textarea
+                  name="message"
+                  rows="3"
+                  placeholder="Message"
+                  value={form.message}
+                  onChange={handleChange}
+                  className={`w-full px-4 py-2 rounded-lg bg-[#0f152d] border ${
+                    errors.message ? "border-red-500" : "border-white/10"
+                  } text-white`}
+                />
+                {errors.message && <p className="text-xs text-red-400">{errors.message}</p>}
+
+                {/* Recaptcha */}
+                {loadRecaptcha && (
+                  <div className="flex justify-center my-3">
+                    <LazyReCAPTCHA
+                      sitekey="6LfXbwssAAAAAEBQvv_hYtHm36-zlr8Z9AUS9Cqh"
+                      onChange={handleRecaptchaChange}
+                      theme="dark"
+                      size={isMobile ? "compact" : "normal"}
+                    />
+                  </div>
+                )}
+
+                {errors.recaptcha && (
+                  <p className="text-xs text-red-400">{errors.recaptcha}</p>
+                )}
 
                 <button
                   type="submit"

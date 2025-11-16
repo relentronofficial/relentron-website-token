@@ -45,7 +45,7 @@ export default function ContactPageClient() {
           <h3 className="text-cyan-400 text-2xl font-semibold mb-3 flex items-center gap-2">
             <FaPhone /> Phone
           </h3>
-          <p className="text-gray-300 text-lg">+91 7010834661</p>
+          <p className="text-gray-300 text-lg">+91 7806928166</p>
         </motion.div>
 
         {/* Address */}
@@ -58,6 +58,10 @@ export default function ContactPageClient() {
           <h3 className="text-cyan-400 text-2xl font-semibold mb-3 flex items-center gap-2">
             <FaMapMarkerAlt /> Address
           </h3>
+          <p className="text-gray-300 text-lg leading-relaxed">
+            Near V2 fitness choolaimedu Chennai, Tamil Nadu, India
+          </p>
+          <br></br>
           <p className="text-gray-300 text-lg leading-relaxed">
             2/356, Main Road, Senjeri, Perambalur Dt, Tamil Nadu, India
           </p>
