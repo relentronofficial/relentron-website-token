@@ -207,7 +207,7 @@ export default function EnquiryForm({ floating = true, position: propPosition = 
                 {loadRecaptcha && (
                   <div className="flex justify-center my-3">
                     <LazyReCAPTCHA
-                      sitekey="6Lf-TA8sAAAAAEjyIN-hsUx5p50KK0ia1aDwg7DI"
+                      sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}
                       onChange={handleRecaptchaChange}
                       theme="dark"
                       size={isMobile ? "compact" : "normal"}
