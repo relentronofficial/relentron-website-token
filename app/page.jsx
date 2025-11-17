@@ -30,6 +30,14 @@ export default function Home() {
   useEffect(() => {
     let lenis;
 
+    const isMobile = window.innerWidth <= 768;
+
+    // ❌ Disable Lenis for mobile devices
+    if (isMobile) {
+      document.documentElement.style.scrollBehavior = "smooth";
+      return;
+    }
+
     (async () => {
       const Lenis = (await import("@studio-freight/lenis")).default;
 
