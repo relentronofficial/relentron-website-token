@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -10,57 +10,95 @@ export default function SoftwareDevelopment() {
   const sectionRef = useRef(null);
   const cardsRef = useRef([]);
 
-  // ------------------------------------------
-  // Lightweight Background Animation
-  // ------------------------------------------
+  // Detect mobile once
+  const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
+
+  // ----------------------------------------------------
+  // Background animation (Ultra light on mobile)
+  // ----------------------------------------------------
   useEffect(() => {
     const bg = sectionRef.current.querySelector(".bg-waves");
 
-    gsap.to(bg, {
-      backgroundPosition: "200% 0",
-      duration: 18,
-      repeat: -1,
-      ease: "linear",
-    });
+    if (isMobile) {
+      // Light mode – slow animation, less GPU usage
+      gsap.to(bg, {
+        backgroundPosition: "120% 0",
+        duration: 30,
+        repeat: -1,
+        ease: "none",
+      });
+    } else {
+      // Desktop – full animation
+      gsap.to(bg, {
+        backgroundPosition: "200% 0",
+        duration: 18,
+        repeat: -1,
+        ease: "linear",
+      });
+    }
   }, []);
 
-  // ------------------------------------------
-  // Text + Cards Scroll Animation
-  // ------------------------------------------
+  // ----------------------------------------------------
+  // Scroll animations — DISABLED ON MOBILE
+  // ----------------------------------------------------
   useEffect(() => {
     const section = sectionRef.current;
 
-    gsap.fromTo(
-      section.querySelector("h1"),
-      { opacity: 0, y: 50 },
-      {
-        opacity: 1,
-        y: 0,
-        duration: 1.2,
-        ease: "power3.out",
-        scrollTrigger: { trigger: section, start: "top 85%" },
-      }
-    );
-
-    cardsRef.current.forEach((card, i) => {
+    if (!isMobile) {
+      // Desktop full scroll animations
       gsap.fromTo(
-        card,
-        { opacity: 0, y: 60 },
+        section.querySelector("h1"),
+        { opacity: 0, y: 50 },
         {
           opacity: 1,
           y: 0,
-          duration: 1,
-          delay: i * 0.15,
+          duration: 1.2,
           ease: "power3.out",
-          scrollTrigger: { trigger: card, start: "top 90%" },
+          scrollTrigger: { trigger: section, start: "top 85%" },
         }
       );
-    });
+
+      cardsRef.current.forEach((card, i) => {
+        gsap.fromTo(
+          card,
+          { opacity: 0, y: 60 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 1,
+            delay: i * 0.15,
+            ease: "power3.out",
+            scrollTrigger: { trigger: card, start: "top 90%" },
+          }
+        );
+      });
+    } else {
+      // MOBILE VERSION – simple fade-in (no ScrollTrigger)
+      gsap.fromTo(
+        section.querySelector("h1"),
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" }
+      );
+
+      cardsRef.current.forEach((card, i) => {
+        gsap.fromTo(
+          card,
+          { opacity: 0, y: 30 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.6,
+            delay: i * 0.1,
+            ease: "power2.out",
+          }
+        );
+      });
+    }
   }, []);
 
-  // ------------------------------------------
-  // Data
-  // ------------------------------------------
+  // ----------------------------------------------------
+  // LIST OF SOFTWARES (unchanged)
+  // ----------------------------------------------------
   const softwares = [
     { title: "CRM Software", desc: "AI-powered CRM for tracking leads and automating workflows." },
     { title: "Hospital Management System", desc: "Streamline operations and patient records digitally." },
@@ -76,11 +114,8 @@ export default function SoftwareDevelopment() {
       ref={sectionRef}
       className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-[#010617] text-white py-24 px-8"
     >
-      {/* -------------------------------------------------
-         Futuristic Background (No WebGL, Zero Lag)
-      ------------------------------------------------- */}
+      {/* Background */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        {/* Animated Gradient Waves */}
         <div
           className="bg-waves absolute inset-0 opacity-70"
           style={{
@@ -91,21 +126,23 @@ export default function SoftwareDevelopment() {
           }}
         />
 
-        {/* Soft Floating Particles */}
-        <div className="absolute inset-0">
-          {[...Array(30)].map((_, i) => (
-            <span
-              key={i}
-              className="absolute w-1.5 h-1.5 rounded-full bg-cyan-400/40 animate-ping"
-              style={{
-                top: `${Math.random() * 100}%`,
-                left: `${Math.random() * 100}%`,
-                animationDuration: `${2 + Math.random() * 3}s`,
-                animationDelay: `${Math.random() * 2}s`,
-              }}
-            ></span>
-          ))}
-        </div>
+        {/* MOBILE: remove particles completely */}
+        {!isMobile && (
+          <div className="absolute inset-0">
+            {[...Array(30)].map((_, i) => (
+              <span
+                key={i}
+                className="absolute w-1.5 h-1.5 rounded-full bg-cyan-400/40 animate-ping"
+                style={{
+                  top: `${Math.random() * 100}%`,
+                  left: `${Math.random() * 100}%`,
+                  animationDuration: `${2 + Math.random() * 3}s`,
+                  animationDelay: `${Math.random() * 2}s`,
+                }}
+              ></span>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Heading */}
