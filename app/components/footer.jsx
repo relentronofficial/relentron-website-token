@@ -78,7 +78,7 @@ export default function Footer() {
             <h4 className="text-lg font-semibold text-white mb-4">Connect</h4>
             <ul className="space-y-3 text-sm">
               <li className="flex items-center gap-2">
-                <Mail size={16} /> relentronofficial@gmail.com
+                <Mail size={16} /> support@relentron.com
               </li>
               <li className="flex items-center gap=2">
                 <Phone size={16} /> +91 7806928166
