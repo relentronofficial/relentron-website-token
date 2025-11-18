@@ -5,19 +5,16 @@ import Navbar from "../app/components/navbar";
 import Footer from "../app/components/footer";
 import Script from "next/script";
 
-
 export const metadata = {
   title: "Relentron",
   description: "Building the Future of Tech",
 };
 
 export default function RootLayout({ children }) {
-  useAnalytics();
-
   return (
     <html lang="en">
       <head>
-        {/* ✅ Google reCAPTCHA global script */}
+        {/* reCAPTCHA */}
         <Script
           src="https://www.google.com/recaptcha/api.js"
           strategy="afterInteractive"
@@ -25,23 +22,25 @@ export default function RootLayout({ children }) {
           defer
         />
 
-
-         {/* ✅ Google Analytics Config */}
+        {/* Google Analytics Loader */}
         <Script
-          id="ga-init"
+          src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_ID}`}
           strategy="afterInteractive"
-          dangerouslySetInnerHTML={{
-            __html: `
-              window.dataLayer = window.dataLayer || [];
-              function gtag(){dataLayer.push(arguments);}
-              gtag('js', new Date());
-              gtag('config', '${process.env.NEXT_PUBLIC_GA_ID}', {
-                send_page_view: true
-              });
-            `,
-          }}
         />
+
+        {/* Google Analytics Config */}
+        <Script id="ga-init" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '${process.env.NEXT_PUBLIC_GA_ID}', {
+              send_page_view: true
+            });
+          `}
+        </Script>
       </head>
+
       <body className="bg-black text-white">
         <Navbar />
         <div className="pt-20">{children}</div>
