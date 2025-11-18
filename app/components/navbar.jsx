@@ -5,6 +5,17 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 
+// ⭐ Google Analytics Event Sender
+const gaEvent = (action, category, label) => {
+  if (typeof window !== "undefined" && window.gtag) {
+    window.gtag("event", action, {
+      event_category: category,
+      event_label: label,
+    });
+  }
+};
+
+
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [hideNav, setHideNav] = useState(false);
@@ -29,6 +40,13 @@ export default function Navbar() {
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
   }, [lastScroll]);
+
+   // ⭐ Track Mobile Menu Toggle
+  const toggleMobileMenu = () => {
+    gaEvent("mobile_menu_toggle", "Navigation", isOpen ? "Closed" : "Opened");
+    setIsOpen(!isOpen);
+  };
+
 
   return (
     <motion.nav

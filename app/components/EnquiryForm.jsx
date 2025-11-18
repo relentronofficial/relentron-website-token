@@ -12,6 +12,17 @@ const LazyReCAPTCHA = dynamic(() => import("react-google-recaptcha"), {
   ssr: false,
 });
 
+
+// ⭐ Google Analytics Event Function
+const gaEvent = (action, category, label) => {
+  if (typeof window !== "undefined" && window.gtag) {
+    window.gtag("event", action, {
+      event_category: category,
+      event_label: label,
+    });
+  }
+};
+
 export default function EnquiryForm({ floating = true, position: propPosition = "right" }) {
   const [isOpen, setIsOpen] = useState(false);
   const [loadRecaptcha, setLoadRecaptcha] = useState(false);
@@ -66,6 +77,7 @@ export default function EnquiryForm({ floating = true, position: propPosition = 
     if (!validate()) return;
 
     setStatus("Submitting…");
+    gaEvent("submit", "Enquiry Form", "Form Submitted");
 
     try {
       const res = await fetch("/api/enquiry", {
